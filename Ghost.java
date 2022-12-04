@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,8 +22,11 @@ class Ghost extends Mover
     /* The pellet the ghost was last on top of */
     int lastPelletX,lastPelletY;
 
+    Image image;
+    Image image2;
+
     /*Constructor places ghost and updates states*/
-    public Ghost(int x, int y)
+    public Ghost(int x, int y, Image image, Image image2)
     {
         direction='L';
         pelletX=x/gridSize-1;
@@ -33,6 +37,8 @@ class Ghost extends Mover
         this.lastY = y;
         this.x = x;
         this.y = y;
+        this.image = image;
+        this.image2 = image2;
     }
 
     /* update pellet status */
@@ -166,6 +172,26 @@ class Ghost extends Mover
                 if ( isValidDest(x,y+gridSize))
                     y+= increment;
                 break;
+        }
+    }
+
+    /*Draw the ghosts */
+    public void draw(Graphics g){
+        if (frameCount < 5)
+        {
+            /* Draw first frame of ghosts */
+            g.drawImage(image,x,y,Color.BLACK,null);
+            frameCount++;
+        }
+        else
+        {
+            /* Draw second frame of ghosts */
+            g.drawImage(image2,x,y,Color.BLACK,null);
+
+            if (frameCount >=10)
+                frameCount=0;
+            else
+                frameCount++;
         }
     }
 }

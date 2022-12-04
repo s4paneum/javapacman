@@ -51,10 +51,10 @@ public class Board extends JPanel
 
   /* Initialize the player and ghosts */
   Player player = new Player(200,300);
-  Ghost ghost1 = new Ghost(180,180);
-  Ghost ghost2 = new Ghost(200,180);
-  Ghost ghost3 = new Ghost(220,180);
-  Ghost ghost4 = new Ghost(220,180);
+  Ghost ghost1 = new Ghost(180,180, ghost10, ghost11);
+  Ghost ghost2 = new Ghost(200,180, ghost20, ghost21);
+  Ghost ghost3 = new Ghost(220,180, ghost30, ghost31);
+  Ghost ghost4 = new Ghost(220,180, ghost40, ghost41);
 
   /* Timer is used for playing sound effects and animations */
   long timer = System.currentTimeMillis();
@@ -489,10 +489,10 @@ public class Board extends JPanel
     {
       reset();
       player = new Player(200,300);
-      ghost1 = new Ghost(180,180);
-      ghost2 = new Ghost(200,180);
-      ghost3 = new Ghost(220,180);
-      ghost4 = new Ghost(220,180);
+      ghost1 = new Ghost(180,180, ghost10, ghost11);
+      ghost2 = new Ghost(200,180, ghost20, ghost21);
+      ghost3 = new Ghost(220,180, ghost30, ghost31);
+      ghost4 = new Ghost(220,180, ghost40, ghost41);
       currScore = 0;
       drawBoard(g);
       drawPellets(g);
@@ -661,29 +661,11 @@ public class Board extends JPanel
     if ( pellets[ghost4.lastPelletX][ghost4.lastPelletY])
       fillPellet(ghost4.lastPelletX,ghost4.lastPelletY,g);
 
-
     /*Draw the ghosts */
-    if (ghost1.frameCount < 5)
-    {
-      /* Draw first frame of ghosts */
-      g.drawImage(ghost10,ghost1.x,ghost1.y,Color.BLACK,null);
-      g.drawImage(ghost20,ghost2.x,ghost2.y,Color.BLACK,null);
-      g.drawImage(ghost30,ghost3.x,ghost3.y,Color.BLACK,null);
-      g.drawImage(ghost40,ghost4.x,ghost4.y,Color.BLACK,null);
-      ghost1.frameCount++;
-    }
-    else
-    {
-      /* Draw second frame of ghosts */
-      g.drawImage(ghost11,ghost1.x,ghost1.y,Color.BLACK,null);
-      g.drawImage(ghost21,ghost2.x,ghost2.y,Color.BLACK,null);
-      g.drawImage(ghost31,ghost3.x,ghost3.y,Color.BLACK,null);
-      g.drawImage(ghost41,ghost4.x,ghost4.y,Color.BLACK,null);
-      if (ghost1.frameCount >=10)
-        ghost1.frameCount=0;
-      else
-        ghost1.frameCount++;
-    }
+    ghost1.draw(g);
+    ghost2.draw(g);
+    ghost3.draw(g);
+    ghost4.draw(g);
 
     /* Draw the pacman */
     if (player.frameCount < 5)
