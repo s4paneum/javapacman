@@ -381,18 +381,8 @@ public class Board extends JPanel
       /* Draw the pacman */
       g.drawImage(pacmanImage,player.x,player.y,Color.BLACK,null);
       g.setColor(Color.BLACK);
-      
-      /* Kill the pacman */
-      if (dying == 4)
-        g.fillRect(player.x,player.y,20,7);
-      else if ( dying == 3)
-        g.fillRect(player.x,player.y,20,14);
-      else if ( dying == 2)
-        g.fillRect(player.x,player.y,20,20); 
-      else if ( dying == 1)
-      {
-        g.fillRect(player.x,player.y,20,20); 
-      }
+
+      killPacman(g);
      
       /* Take .1 seconds on each frame of death, and then take 2 seconds
          for the final frame to allow for the sound effect to end */ 
@@ -433,37 +423,21 @@ public class Board extends JPanel
     /* If this is the title screen, draw the title screen and return */
     if (titleScreen)
     {
-      g.setColor(Color.BLACK);
-      g.fillRect(0,0,600,600);
-      g.drawImage(titleScreenImage,0,0,Color.BLACK,null);
-
-      /* Stop any pacman eating sounds */
-      sounds.nomNomStop();
-      New = 1;
+      showScreen(g, titleScreenImage);
       return;
     } 
 
     /* If this is the win screen, draw the win screen and return */
     else if (winScreen)
     {
-      g.setColor(Color.BLACK);
-      g.fillRect(0,0,600,600);
-      g.drawImage(winScreenImage,0,0,Color.BLACK,null);
-      New = 1;
-      /* Stop any pacman eating sounds */
-      sounds.nomNomStop();
+      showScreen(g, winScreenImage);
       return;
     }
 
     /* If this is the game over screen, draw the game over screen and return */
     else if (overScreen)
     {
-      g.setColor(Color.BLACK);
-      g.fillRect(0,0,600,600);
-      g.drawImage(gameOverImage,0,0,Color.BLACK,null);
-      New = 1;
-      /* Stop any pacman eating sounds */
-      sounds.nomNomStop();
+      showScreen(g, gameOverImage);
       return;
     }
 
@@ -650,16 +624,7 @@ public class Board extends JPanel
       sounds.nomNomStop();
     }
 
-
-    /* Replace pellets that have been run over by ghosts */
-    if ( pellets[ghost1.lastPelletX][ghost1.lastPelletY])
-      fillPellet(ghost1.lastPelletX,ghost1.lastPelletY,g);
-    if ( pellets[ghost2.lastPelletX][ghost2.lastPelletY])
-      fillPellet(ghost2.lastPelletX,ghost2.lastPelletY,g);
-    if ( pellets[ghost3.lastPelletX][ghost3.lastPelletY])
-      fillPellet(ghost3.lastPelletX,ghost3.lastPelletY,g);
-    if ( pellets[ghost4.lastPelletX][ghost4.lastPelletY])
-      fillPellet(ghost4.lastPelletX,ghost4.lastPelletY,g);
+    replacePellets(g);
 
     /*Draw the ghosts */
     ghost1.draw(g);
@@ -683,16 +648,16 @@ public class Board extends JPanel
       {
         case 'L':
            g.drawImage(pacmanLeftImage,player.x,player.y,Color.BLACK,null);
-           break;     
+           break;
         case 'R':
            g.drawImage(pacmanRightImage,player.x,player.y,Color.BLACK,null);
-           break;     
+           break;
         case 'U':
            g.drawImage(pacmanUpImage,player.x,player.y,Color.BLACK,null);
-           break;     
+           break;
         case 'D':
            g.drawImage(pacmanDownImage,player.x,player.y,Color.BLACK,null);
-           break;     
+           break;
       }
     }
 
@@ -700,5 +665,41 @@ public class Board extends JPanel
     g.setColor(Color.WHITE);
     g.drawRect(19,19,382,382);
 
+  }
+
+  private void replacePellets(Graphics g) {
+    /* Replace pellets that have been run over by ghosts */
+    if ( pellets[ghost1.lastPelletX][ghost1.lastPelletY])
+      fillPellet(ghost1.lastPelletX,ghost1.lastPelletY, g);
+    if ( pellets[ghost2.lastPelletX][ghost2.lastPelletY])
+      fillPellet(ghost2.lastPelletX,ghost2.lastPelletY, g);
+    if ( pellets[ghost3.lastPelletX][ghost3.lastPelletY])
+      fillPellet(ghost3.lastPelletX,ghost3.lastPelletY, g);
+    if ( pellets[ghost4.lastPelletX][ghost4.lastPelletY])
+      fillPellet(ghost4.lastPelletX,ghost4.lastPelletY, g);
+  }
+
+  private void showScreen(Graphics g, Image winScreenImage) {
+    g.setColor(Color.BLACK);
+    g.fillRect(0,0,600,600);
+    g.drawImage(winScreenImage,0,0,Color.BLACK,null);
+    New = 1;
+    /* Stop any pacman eating sounds */
+    sounds.nomNomStop();
+    return;
+  }
+
+  private void killPacman(Graphics g) {
+    /* Kill the pacman */
+    if (dying == 4)
+      g.fillRect(player.x,player.y,20,7);
+    else if ( dying == 3)
+      g.fillRect(player.x,player.y,20,14);
+    else if ( dying == 2)
+      g.fillRect(player.x,player.y,20,20);
+    else if ( dying == 1)
+    {
+      g.fillRect(player.x,player.y,20,20);
+    }
   }
 }
