@@ -455,8 +455,7 @@ public class Board extends JPanel
         g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
     }
    
-    /* oops is set to true when pacman has lost a life */ 
-    boolean oops=false;
+
     
     /* Game initialization */
     if (New==1)
@@ -522,29 +521,12 @@ public class Board extends JPanel
     g.copyArea(ghost2.x-20,ghost2.y-20,80,80,0,0);
     g.copyArea(ghost3.x-20,ghost3.y-20,80,80,0,0);
     g.copyArea(ghost4.x-20,ghost4.y-20,80,80,0,0);
-    
-
 
     /* Detect collisions */
-    if (player.x == ghost1.x && Math.abs(player.y-ghost1.y) < 10)
-      oops=true;
-    else if (player.x == ghost2.x && Math.abs(player.y-ghost2.y) < 10)
-      oops=true;
-    else if (player.x == ghost3.x && Math.abs(player.y-ghost3.y) < 10)
-      oops=true;
-    else if (player.x == ghost4.x && Math.abs(player.y-ghost4.y) < 10)
-      oops=true;
-    else if (player.y == ghost1.y && Math.abs(player.x-ghost1.x) < 10)
-      oops=true;
-    else if (player.y == ghost2.y && Math.abs(player.x-ghost2.x) < 10)
-      oops=true;
-    else if (player.y == ghost3.y && Math.abs(player.x-ghost3.x) < 10)
-      oops=true;
-    else if (player.y == ghost4.y && Math.abs(player.x-ghost4.x) < 10)
-      oops=true;
+    boolean playerDied = collisionFound();
 
     /* Kill the pacman */
-    if (oops && !stopped)
+    if (playerDied && !stopped)
     {
       /* 4 frames of death*/
       dying=4;
@@ -562,57 +544,18 @@ public class Board extends JPanel
     }
 
     /* Delete the players and ghosts */
-    g.setColor(Color.BLACK);
-    g.fillRect(player.lastX,player.lastY,20,20);
-    g.fillRect(ghost1.lastX,ghost1.lastY,20,20);
-    g.fillRect(ghost2.lastX,ghost2.lastY,20,20);
-    g.fillRect(ghost3.lastX,ghost3.lastY,20,20);
-    g.fillRect(ghost4.lastX,ghost4.lastY,20,20);
+    deleteCharacters(g);
 
     /* Eat pellets */
     if ( pellets[player.pelletX][player.pelletY] && New!=2 && New !=3)
     {
-      lastPelletEatenX = player.pelletX;
-      lastPelletEatenY = player.pelletY;
-
-      /* Play eating sound */
-      sounds.nomNom();
-      
-      /* Increment pellets eaten value to track for end game */
-      player.pelletsEaten++;
-
-      /* Delete the pellet*/
-      pellets[player.pelletX][player.pelletY]=false;
-
-      /* Increment the score */
-      currScore += 50;
-
-      /* Update the screen to reflect the new score */
-      g.setColor(Color.BLACK);
-      g.fillRect(0,0,600,20);
-      g.setColor(Color.YELLOW);
-      g.setFont(font);
-      if (demo)
-        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+highScore,20,10);
-      else
-        g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
+      eatPellet();
+      updateScore(g);
 
       /* If this was the last pellet */
       if (player.pelletsEaten == 173)
       {
-        /*Demo mode can't get a high score */
-        if (!demo)
-        {
-          if (currScore > highScore)
-          {
-            updateScore(currScore);
-          }
-          winScreen = true;
-        }
-        else
-        {
-          titleScreen = true;
-        }
+        win();
         return;
       }
     }
@@ -665,6 +608,80 @@ public class Board extends JPanel
     g.setColor(Color.WHITE);
     g.drawRect(19,19,382,382);
 
+  }
+
+  private boolean collisionFound() {
+    if (player.x == ghost1.x && Math.abs(player.y-ghost1.y) < 10)
+      return true;
+    else if (player.x == ghost2.x && Math.abs(player.y-ghost2.y) < 10)
+      return true;
+    else if (player.x == ghost3.x && Math.abs(player.y-ghost3.y) < 10)
+      return true;
+    else if (player.x == ghost4.x && Math.abs(player.y-ghost4.y) < 10)
+      return true;
+    else if (player.y == ghost1.y && Math.abs(player.x-ghost1.x) < 10)
+      return true;
+    else if (player.y == ghost2.y && Math.abs(player.x-ghost2.x) < 10)
+      return true;
+    else if (player.y == ghost3.y && Math.abs(player.x-ghost3.x) < 10)
+      return true;
+    else if (player.y == ghost4.y && Math.abs(player.x-ghost4.x) < 10)
+      return true;
+    return false;
+  }
+
+  private void deleteCharacters(Graphics g) {
+    g.setColor(Color.BLACK);
+    g.fillRect(player.lastX,player.lastY,20,20);
+    g.fillRect(ghost1.lastX,ghost1.lastY,20,20);
+    g.fillRect(ghost2.lastX,ghost2.lastY,20,20);
+    g.fillRect(ghost3.lastX,ghost3.lastY,20,20);
+    g.fillRect(ghost4.lastX,ghost4.lastY,20,20);
+  }
+
+  private void eatPellet() {
+    lastPelletEatenX = player.pelletX;
+    lastPelletEatenY = player.pelletY;
+
+    /* Play eating sound */
+    sounds.nomNom();
+
+    /* Increment pellets eaten value to track for end game */
+    player.pelletsEaten++;
+
+    /* Delete the pellet*/
+    pellets[player.pelletX][player.pelletY]=false;
+
+    /* Increment the score */
+    currScore += 50;
+  }
+
+  private void updateScore(Graphics g) {
+    /* Update the screen to reflect the new score */
+    g.setColor(Color.BLACK);
+    g.fillRect(0,0,600,20);
+    g.setColor(Color.YELLOW);
+    g.setFont(font);
+    if (demo)
+      g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+highScore,20,10);
+    else
+      g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
+  }
+
+  private void win() {
+    /*Demo mode can't get a high score */
+    if (!demo)
+    {
+      if (currScore > highScore)
+      {
+        updateScore(currScore);
+      }
+      winScreen = true;
+    }
+    else
+    {
+      titleScreen = true;
+    }
   }
 
   private void replacePellets(Graphics g) {
